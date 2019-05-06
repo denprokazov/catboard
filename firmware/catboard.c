@@ -27,6 +27,8 @@
 #define _PORTD		(uint8_t *const)&PORTD
 #define _PORTB		(uint8_t *const)&PORTB
 #define _PINB		(uint8_t *const)&PINB
+#define _PORTF		(uint8_t *const)&PORTF
+#define _PINF		(uint8_t *const)&PINF
 
 #define ROWS	5
 #define COLS	12
@@ -75,12 +77,13 @@
 #define KEY_PRESSED_CTRL	5
 #define KEY_PRESSED_PREV	6
 
-//#include "qwerty.h"
+#include "qwerty.h"
 //#include "dvorak.h"
-#include "jcuken.h"
+//#include "jcuken.h"
 
 //#include "at90usb162.h"
-#include "at90usb162mu.h"
+//#include "at90usb162mu.h"
+#include "at32u4mu.h"
 
 //#include "my_macros.h"
 
@@ -96,8 +99,7 @@
 #define KEY_LAYOUT		KEY_LAYOUT_ALT_SHIFT
 
 // OS mode: 0 - Windows, 1 - Linux, 2 - Mac
-uint8_t os_mode = 1;
-
+uint8_t os_mode = 0;
 uint8_t caps_lock_led = 0;
 
 // 0x00-0x7F - normal keys
@@ -121,7 +123,7 @@ uint8_t *prev_layer = 0;
 
 uint8_t turbo_repeat = 1;
 uint8_t locked = 0;
-uint8_t led = 1; // LED light
+uint8_t led = 0; // LED light
 
 uint8_t last_key = 0xFF;
 uint16_t press_time = 0;
@@ -181,16 +183,16 @@ int main(void) {
 void init(void) {
 	// Set for 16 MHz clock
 	CLKPR = 0x80; CLKPR = 0;
-
+	//LED_OFF;
 	init_ports();
 
-	LED_CONFIG;
+	/*LED_CONFIG;
 	LED_RED_CONFIG;
 	LED_BLUE_CONFIG;
 
 	LED_RED_OFF;
 	LED_BLUE_OFF;
-	if (led) LED_ON;
+	if (led) LED_ON;*/
 
 	for (uint8_t i=0; i<KEYS; i++) {
 		pressed[i] = 0;
@@ -198,8 +200,8 @@ void init(void) {
 
 	usb_init();
 	while(!usb_configured());
-	LED_OFF;
-	if (led) LED_RED_ON;
+	//LED_OFF;
+	//if (led) LED_RED_ON;
 	caps_lock_led = keyboard_leds;
 }
 
@@ -207,7 +209,7 @@ void poll() {
 	uint8_t row, col, key_id;
 	for (row=0; row<ROWS; row++) { // scan rows
 		*row_port[row] &= ~row_bit[row];
-		_delay_us(1);
+		_delay_us(1000);
 		for (col=0; col<COLS; col++) { // read columns
 			key_id = col*ROWS+row;
 			if (! (*col_pin[col] & col_bit[col])) { // press key
