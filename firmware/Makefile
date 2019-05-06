@@ -56,8 +56,8 @@ SRC =	$(TARGET).c \
 # type "make clean" after changing this, so all files will be rebuilt
 #
 # Teensy 1.0; AVR-USB162 (Microsin162)
-MCU = at90usb162
-#MCU = atmega32u4        # Teensy 2.0
+#MCU = at90usb162
+MCU = atmega32u4        # Teensy 2.0
 #MCU = at90usb646       # Teensy++ 1.0
 #MCU = at90usb1286      # Teensy++ 2.0
 
